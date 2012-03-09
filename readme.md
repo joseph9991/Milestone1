@@ -16,8 +16,7 @@ at 96 kHz, showing the 16-bit quantization distortion:
     Frequency:	997.000000 Hz
     THD+N:  	0.0016% or -96.1 dB
 
-(Is this right?  Theoretical SNR of a FS sine is 1.761+6.02*16 = -98.09 dB.  
-Close, at least.)
+(Is this right?  Theoretical SNR of a full-scale sine is 1.761+6.02⋅16 = -98.09 dB.  Close, at least.)
 
 According to the never-wrong Wikipedia:
 
@@ -46,11 +45,13 @@ Also it computes the FFT for the entire sample, which is a waste of time.  Use
 short samples.
 
 Adobe Audition with dither:
+
     997 Hz 8-bit    -49.8
     997 Hz 16-bit   -93.4
     997 Hz 32-bit   -143.9
 
 Art Ludwig's Sound Files (http://members.cox.net/artludwig/):
+
     File                Claimed  Measured  (dB)
     Reference           0.0%     0.0022%   -93.3
     Single-ended triode 5.0%     5.06%     -25.9
