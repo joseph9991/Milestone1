@@ -1,3 +1,5 @@
+Updated version here: https://github.com/endolith/waveform-analyzer
+
 Somewhat crude THD+N calculator in Python
 
 Measures the total harmonic distortion plus noise (THD+N) for a given input 
