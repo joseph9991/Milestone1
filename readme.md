@@ -1,10 +1,15 @@
-Updated version here: https://github.com/endolith/waveform-analyzer
+Unfortunately, there are 2 versions of this.
+The other is here: https://github.com/endolith/waveform-analyzer
+I intend to either completely combine them or completely separate them, 
+eventually.
 
 Somewhat crude THD+N calculator in Python
 
 Measures the total harmonic distortion plus noise (THD+N) for a given input 
 signal, by guessing the fundamental frequency (finding the peak in the FFT), 
-and notching it out in the frequency domain.
+and notching it out in the frequency domain.  This is a THD<sub>R</sub> 
+measurement, meaning the denominator is the total distorted signal, not a
+bandpassed fundamental.
 
 Depends on Audiolab and SciPy
 
@@ -20,17 +25,17 @@ at 96 kHz, showing the 16-bit quantization distortion:
 
 (Is this right?  Theoretical SNR of a full-scale sine is 1.761+6.02⋅16 = -98.09 dB.  Close, at least.)
 
-According to the never-wrong Wikipedia:
-
-* THD is the fundamental alone vs the harmonics alone
-* THD+N is the entire signal (not just the fundamental) vs the entire signal 
-with the fundamental notched out.  (For low distortion, the difference between 
-the entire signal and the fundamental is negligible.)
+* THD<sub>F</sub> is the fundamental alone vs the harmonics alone
+* THD<sub>R</sub> is the total distorted signal vs the harmonics alone (this script)
+* THD+N is usually measured like THD<sub>R</sub>: the entire signal (not just 
+the fundamental) vs the entire signal with the fundamental notched out.  (With 
+low distortion figures, the difference between the entire signal and the 
+fundamental is negligible.)
 
 The primary problem with the current script is that I don't know how much of 
-the surrounding region of the peak to throw away.  Probably the way to match 
-other test equipment is to just calculate the width of a certain bandwidth, 
-but is that really ideal?
+the surrounding region of the peak to throw away.  Probably should be related 
+to the mainlobe width of the windowing function, rather than what it's currently 
+doing.  To match other test equipment would just use a fixed bandwidth, though:
 
     width = 50
     f[i-width: i+width+1] = 0
