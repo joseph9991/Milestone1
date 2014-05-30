@@ -26,11 +26,13 @@ at 96 kHz, showing the 16-bit quantization distortion:
 (Is this right?  Theoretical SNR of a full-scale sine is 1.761+6.02⋅16 = -98.09 dB.  Close, at least.)
 
 * THD<sub>F</sub> is the fundamental alone vs the harmonics alone
-* THD<sub>R</sub> is the total distorted signal vs the harmonics alone (this script)
+* THD<sub>R</sub> is the total distorted signal vs the harmonics alone
 * THD+N is usually measured like THD<sub>R</sub>: the entire signal (not just 
-the fundamental) vs the entire signal with the fundamental notched out.  (With 
+the fundamental) vs the entire signal with the fundamental notched out 
+(including noise and other components, not just the harmonics).  (With 
 low distortion figures, the difference between the entire signal and the 
-fundamental is negligible.)
+fundamental is negligible.)  This script is THD+N<sub>R</sub> (if that's how 
+you write that).
 
 The primary problem with the current script is that I don't know how much of 
 the surrounding region of the peak to throw away.  Probably should be related 
