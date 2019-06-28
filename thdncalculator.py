@@ -46,7 +46,9 @@ def THDN(signal, sample_rate):
     if not better.
     """
     # Get rid of DC and window the signal
-    signal -= mean(signal) # TODO: Do this in the frequency domain, and take any skirts with it?
+
+    # TODO: Do this in the frequency domain, and take any skirts with it?
+    signal -= mean(signal)
     windowed = signal * blackmanharris(len(signal))  # TODO Kaiser?
 
     # Measure the total signal before filtering but after windowing
@@ -57,15 +59,18 @@ def THDN(signal, sample_rate):
     # minima
     f = rfft(windowed)
     i = argmax(abs(f))
-    print 'Frequency: %f Hz' % (sample_rate * (i / len(windowed)))  # Not exact
+
+    # Not exact
+    print('Frequency: %f Hz' % (sample_rate * (i / len(windowed))))
     lowermin, uppermin = find_range(abs(f), i)
     f[lowermin: uppermin] = 0
 
     # Transform noise back into the signal domain and measure it
-    # TODO: Could probably calculate the RMS directly in the frequency domain instead
+    # TODO: Could probably calculate the RMS directly in the frequency domain
+    # instead
     noise = irfft(f)
     THDN = rms_flat(noise) / total_rms
-    print "THD+N:     %.4f%% or %.1f dB" % (THDN * 100, 20 * log10(THDN))
+    print("THD+N:     %.4f%% or %.1f dB" % (THDN * 100, 20 * log10(THDN)))
 
 
 def load(filename):
@@ -93,7 +98,7 @@ def analyze_channels(filename, function):
     file
     """
     signal, sample_rate, channels = load(filename)
-    print 'Analyzing "' + filename + '"...'
+    print('Analyzing "' + filename + '"...')
 
     if channels == 1:
         # Monaural
@@ -101,18 +106,19 @@ def analyze_channels(filename, function):
     elif channels == 2:
         # Stereo
         if np.array_equal(signal[:, 0], signal[:, 1]):
-            print '-- Left and Right channels are identical --'
+            print('-- Left and Right channels are identical --')
             function(signal[:, 0], sample_rate)
         else:
-            print '-- Left channel --'
+            print('-- Left channel --')
             function(signal[:, 0], sample_rate)
-            print '-- Right channel --'
+            print('-- Right channel --')
             function(signal[:, 1], sample_rate)
     else:
         # Multi-channel
         for ch_no, channel in enumerate(signal.transpose()):
-            print '-- Channel %d --' % (ch_no + 1)
+            print('-- Channel %d --' % (ch_no + 1))
             function(channel, sample_rate)
+
 
 files = sys.argv[1:]
 if files:
@@ -120,8 +126,8 @@ if files:
         try:
             analyze_channels(filename, THDN)
         except Exception as e:
-            print 'Couldn\'t analyze "' + filename + '"'
-            print e
-        print ''
+            print('Couldn\'t analyze "' + filename + '"')
+            print(e)
+        print()
 else:
     sys.exit("You must provide at least one file to analyze")
