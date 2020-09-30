@@ -14,11 +14,32 @@ class Task2:
 		speaker_list = df['speaker'].values.tolist()
 		start_list = df['start_time'].values.tolist()
 		end_list = df['end_time'].values.tolist()
-		current = speaker_list[0]
-
-		while current:
 
 
+		for i in range(0,len(speaker_list)):
+			temp1 = []							# Rename List Name
+			current = speaker_list[i]
+			
+			if cursor == 0:
+				temp1 = [current,start_list[0],end_list[0]]
+				speakers.append(temp1)
+			
+				cursor = cursor + 1
+				continue
+
+			# if cursor == len(speaker_list):
+			# 	break
+
+			if current == speaker_list[i] and current == speaker_list[i-1]:
+				speakers[-1][2] = end_list[i]
+			
+			else:
+				temp1 = [current,start_list[i],end_list[i]]
+				speakers.append(temp1)
+
+			cursor = cursor + 1
+		for i in speakers:
+			print(i) 
 
 	def trim(self):
 		pass
