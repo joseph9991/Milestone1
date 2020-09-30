@@ -10,7 +10,7 @@ from pandas import read_csv
 import random
 import operator
 
-class SurfBoard:
+class Task1:
 
 	def __init__(self, file_name, bucket_name):
 		self.file_name = file_name
@@ -170,6 +170,6 @@ if __name__ == "__main__":
 	warnings.filterwarnings("ignore")
 	bucket_name = 'surfboard-transcribe'
 
-	sb = SurfBoard(file_name,bucket_name)
+	sb = Task1(file_name,bucket_name)
 	sb.execute()
 
