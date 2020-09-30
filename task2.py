@@ -1,13 +1,17 @@
 import pandas as pd
 from pandas import read_csv
 
+import os
+import sys
+
 class Task2:
 
-	def __init__(self,df):
+	def __init__(self,df,file_name):
 		self.df = df
+		self.file_name = file_name
+		self.speakers = []
 
-	def merge(self):
-		speakers = []
+	def merge_timestamp(self):
 		df_length = len(df.index) 
 		cursor = 0
 		
@@ -17,38 +21,47 @@ class Task2:
 
 
 		for i in range(0,len(speaker_list)):
-			temp1 = []							# Rename List Name
-			current = speaker_list[i]
+			current_row = []						
+			current_speaker = speaker_list[i]
 			
 			if cursor == 0:
-				temp1 = [current,start_list[0],end_list[0]]
-				speakers.append(temp1)
+				current_row = [current_speaker,start_list[0],end_list[0]]
+				self.speakers.append(current_row)
 			
 				cursor = cursor + 1
 				continue
 
-			# if cursor == len(speaker_list):
-			# 	break
-
-			if current == speaker_list[i] and current == speaker_list[i-1]:
-				speakers[-1][2] = end_list[i]
+			if current_speaker == speaker_list[i] and current_speaker == speaker_list[i-1]:
+				self.speakers[-1][2] = end_list[i]
 			
 			else:
-				temp1 = [current,start_list[i],end_list[i]]
-				speakers.append(temp1)
+				current_row = [current_speaker,start_list[i],end_list[i]]
+				self.speakers.append(current_row)
+
 
 			cursor = cursor + 1
-		for i in speakers:
-			print(i) 
 
+		for i in range(len(self.speakers)):
+			if i == len(self.speakers)-1:
+				break
+			self.speakers[i][2] = self.speakers[i+1][1]
+
+		
 	def trim(self):
-		pass
+		cursor = 0
+		for speaker in self.speakers:
+			command = f"ffmpeg -y -i {self.file_name} -ss {speaker[1]} -to {speaker[2]} -c:v copy -c:a copy {speaker[0]+str(cursor)+'.wav'}"
+			os.system(command)
+			cursor = cursor + 1
 
 
 if __name__ == "__main__":
 
+	file_name = sys.argv[1]
+
 	# Temp Code
 	df = pd.read_csv('audio_only-92416.csv') 
 
-	obj = Task2(df)
-	obj.merge()
+	obj = Task2(df,file_name)
+	obj.merge_timestamp()
+	obj.trim()
