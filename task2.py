@@ -88,7 +88,9 @@ class Task2:
 			command = f"ffmpeg -y -f concat -i {txt_file} -c copy {txt_file[:-4]}.wav"
 			os.system(command)
 
-
+# >>> data, rate = sf.read('spk_1.wav')
+# >>> meter = pyln.Meter(rate)
+# >>> loudness = meter.integrated_loudness(data)
 
 if __name__ == "__main__":
 

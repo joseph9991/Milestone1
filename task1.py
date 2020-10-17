@@ -10,6 +10,10 @@ from pandas import read_csv
 import random
 import operator
 
+# TODO: Lambda Handler Fn -> Check if filler words is working or not
+# TODO: Task1 -> Make sure print filler words count 
+
+
 class Task1:
 
 	def __init__(self, file_name, bucket_name):
@@ -76,6 +80,7 @@ class Task1:
 	
 		except Exception as err:
 			print(f'Error occurred: {err}')
+			exit(0)
 	
 		# Deletes the temporary generated file	
 		# if os.path.exists(self.file_name):
@@ -136,11 +141,11 @@ class Task1:
 		print("----------------------------------------------")
 
 		for index, row in df.iterrows():
-			print('{}\t{}\t{}'.format(row['speaker'],row['count'],row['comment']))
+			print('{}\t{}\t{}\t{}'.format(row['speaker'], row['stopwords'], row['fillerwords'], row['comment']))
 			if not row['speaker'] in speakers:
-				speakers[row['speaker']] = row['count']
+				speakers[row['speaker']] = row['fillerwords']
 			else:
-				speakers[row['speaker']] += row['count']
+				speakers[row['speaker']] += row['fillerwords']
 
 		print("----------------------------------------------")
 

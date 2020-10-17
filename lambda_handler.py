@@ -23,8 +23,10 @@ nltk_stopwords = ['ll', 'on', 'because', 'each', 'hadn', 'into', 'above', 'some'
     'has', 'my', 'their', 'yourself', 'to', "won't", 'there', 'needn', 'that', 'at', 'were', "hadn't", 'so', 'them', 
     'no', "needn't", 'being', 'we', 'did', 'should', 'and', 't', 'shouldn', 'm', 'isn', 'had', 'theirs', 'you', 
     'after', 'once', 'hasn', 'while', "weren't", 'further']
-
 count = []
+
+all_fillerwords = ['Uh','Um', 'er', 'ah', 'like', 'okay', 'right', 'you know']
+found_fillerwords = []
 
 s3 = boto3.client('s3')
 
@@ -58,9 +60,14 @@ def lambda_handler(event, context):
         headers = next(f) 
         for lines in csvFile:
             stopwords = [word for word in lines[4].split() if word.lower() not in nltk_stopwords]
+            fillerwords = [word for word in lines[4].split() if word.lower() in all_fillerwords]
             count.append(len(stopwords))
+            found_fillerwords.append(len(fillerwords))
+
             
-    df['count'] = count
+
+    df['stopwords'] = count
+    df['fillerwords'] = found_fillerwords
 
     csvFile = "/tmp/{}.csv".format(localkey)
     with open(csvFile,'w') as f:
