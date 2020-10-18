@@ -1,9 +1,13 @@
 import pandas as pd
-import smart_open
+from smart_open import open
+import json
 
-csvFile = '{}.csv'.format('audio-only')
+jsonFile = '{}.json'.format('audio_only-95623')
 
-file_link = 's3://{}/transcript/{}'.format('surfboard-transcribe', csvFile)
+file_link = 's3://{}/{}'.format('surfboard-response', jsonFile)
 
 # stream lines from an S3 object
-df = pd.read_csv(smart_open.open(file_link))
+df = (open(file_link))
+
+data =json.load(df)
+print(json.dumps(data,indent=4))

@@ -23,9 +23,11 @@ nltk_stopwords = ['ll', 'on', 'because', 'each', 'hadn', 'into', 'above', 'some'
     'has', 'my', 'their', 'yourself', 'to', "won't", 'there', 'needn', 'that', 'at', 'were', "hadn't", 'so', 'them', 
     'no', "needn't", 'being', 'we', 'did', 'should', 'and', 't', 'shouldn', 'm', 'isn', 'had', 'theirs', 'you', 
     'after', 'once', 'hasn', 'while', "weren't", 'further']
-count = []
 
-all_fillerwords = ['Uh','Um', 'er', 'ah', 'like', 'okay', 'right', 'you know']
+found_stopwords = []
+
+all_fillerwords = ['Uh','Um', 'er', 'ah', 'like', 'okay', 'right,', 'you know','Um.','So,','so,',
+                    'Right?','Uh,','uh,','uh','um,','Um,','um','okay,']
 found_fillerwords = []
 
 s3 = boto3.client('s3')
@@ -54,29 +56,80 @@ def lambda_handler(event, context):
     tscribe.write(jsonFile,format='csv',save_as=csvFile)
     df = pd.read_csv(csvFile)
     
+    jsonFile = "/tmp/{}.json".format(localkey)
+    result = df.to_json(orient="records")
+    parsed = json.loads(result)
+    
+    with open(jsonFile,'w') as f:
+        json.dump(parsed,f,indent=4)
+
+    jsonFile = "/tmp/{}.json".format(localkey)
     # Counting stopwords for every row
-    with open(csvFile,mode='r') as f:
-        csvFile = csv.reader(f)
-        headers = next(f) 
-        for lines in csvFile:
-            stopwords = [word for word in lines[4].split() if word.lower() not in nltk_stopwords]
-            fillerwords = [word for word in lines[4].split() if word.lower() in all_fillerwords]
-            count.append(len(stopwords))
+    with open(jsonFile, 'r') as f:
+        data = json.load(f)
+        new_data = {}
+        for i in range(len(data)):
+
+            stopwords = [word for word in data[i]["comment"].split() if word.lower() in nltk_stopwords]
+
+            fillerwords = [word for word in data[i]["comment"].split() if word.lower() in all_fillerwords]
+            
+            found_stopwords.append(len(stopwords))
             found_fillerwords.append(len(fillerwords))
 
-            
+            data[i]['stopwords'] = len(stopwords)
+            data[i]['fillerwords'] = len(fillerwords)
 
-    df['stopwords'] = count
-    df['fillerwords'] = found_fillerwords
+            if len(stopwords) > 0:
 
-    csvFile = "/tmp/{}.csv".format(localkey)
-    with open(csvFile,'w') as f:
-        (df).to_csv(f, header=True)
- 
+                if data[i]["speaker"] not in new_data:
+                    new_data[data[i]["speaker"]] = {}
+                    new_data[data[i]["speaker"]]["stopwords"] = {}
+                    new_data[data[i]["speaker"]]["fillerwords"] = {}
+                    for stopword in stopwords:
+                        if stopword not in new_data[data[i]["speaker"]]["stopwords"]:
+                            new_data[data[i]["speaker"]]["stopwords"][stopword] = 1
+                        else:
+                            new_data[data[i]["speaker"]]["stopwords"][stopword] += 1
+                else:
+                    for stopword in stopwords:
+                        if stopword not in new_data[data[i]["speaker"]]["stopwords"]:
+                            new_data[data[i]["speaker"]]["stopwords"][stopword] = 1
+                        else:
+                            new_data[data[i]["speaker"]]["stopwords"][stopword] += 1 
+        
+        
+            if len(fillerwords) > 0:
+                if data[i]["speaker"] not in new_data:
+                    new_data[data[i]["speaker"]] = {}
+                    new_data[data[i]["speaker"]]["stopwords"] = {}
+                    new_data[data[i]["speaker"]]["fillerwords"] = {}
+                    for fillerword in fillerwords:
+                        if fillerword not in new_data[data[i]["speaker"]]["fillerwords"]:
+                            new_data[data[i]["speaker"]]["fillerwords"][fillerword] = 1
+                        else:
+                            new_data[data[i]["speaker"]]["fillerwords"][fillerword] += 1
+                else:
+                    for fillerword in fillerwords:
+                        if fillerword not in new_data[data[i]["speaker"]]["fillerwords"]:
+                            new_data[data[i]["speaker"]]["fillerwords"][fillerword] = 1
+                        else:
+                            new_data[data[i]["speaker"]]["fillerwords"][fillerword] += 1 
+
+        data = [data,new_data]                   
+
+
+    jsonFile = "/tmp/{}.json".format(localkey)
+    with open(jsonFile,'w') as f:
+        json.dump(data, f,indent=4)
+
+
+
     bucket_transcribe = 'surfboard-transcribe'
-    csv_upload_file = 'transcript/{}.csv'.format(localkey)
+    json_upload_file = 'transcript/{}.json'.format(localkey)
     
-    s3.upload_file(csvFile,bucket_transcribe,csv_upload_file)
+    s3.upload_file(jsonFile,bucket_transcribe,json_upload_file)
+
 
     return {
         'statusCode': 200,

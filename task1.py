@@ -9,6 +9,7 @@ import pandas as pd
 from pandas import read_csv
 import random
 import operator
+import json
 
 # TODO: Lambda Handler Fn -> Check if filler words is working or not
 # TODO: Task1 -> Make sure print filler words count 
@@ -123,42 +124,50 @@ class Task1:
 
 
 	def read_csv_response(self):
-		print("\nWaiting for the CSV file to generate...")
+		print("\nWaiting for the JSON file to generate...")
 		time.sleep(10)
 		
 		print("Starting Task 1: Count stopwords of each speaker")
 		
-		csvFile = '{}-{}.csv'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
-		file_link = 's3://{}/transcript/{}'.format(self.bucket_name, csvFile)
+		jsonFile = '{}-{}.json'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
+		file_link = 's3://{}/transcript/{}'.format(self.bucket_name, jsonFile)
 
 		# stream lines from an S3 object
-		df = pd.read_csv(smart_open.open(file_link))
+
+		data =json.load(smart_open.open(file_link))
+		print(json.dumps(data,indent=4))
+
+
+
+		# stream lines from an S3 object
+		# df = pd.read_csv(smart_open.open(file_link))
 				
-		speakers = {}
+		# speakers = {}
 
-		print("\n\n----------------------------------------------")
-		print("Speaker\tCount\tSpeech")
-		print("----------------------------------------------")
+		# print("\n\n----------------------------------------------")
+		# print("Speaker\tStopwords\tFiller words\tSpeech")
+		# print("----------------------------------------------")
 
-		for index, row in df.iterrows():
-			print('{}\t{}\t{}\t{}'.format(row['speaker'], row['stopwords'], row['fillerwords'], row['comment']))
-			if not row['speaker'] in speakers:
-				speakers[row['speaker']] = row['fillerwords']
-			else:
-				speakers[row['speaker']] += row['fillerwords']
+		# for index, row in df.iterrows():
+		# 	print('{}\t{}\t{}\t{}'.format(row['speaker'], row['stopwords'], row['fillerwords'], row['comment']))
+		# 	if not row['speaker'] in speakers:
+		# 		speakers[row['speaker']] = [row['stopwords'],row['fillerwords']]
+		# 	else:
+		# 		speakers[row['speaker']][0] += row['stopwords']
+		# 		speakers[row['speaker']][1] += row['fillerwords']
 
-		print("----------------------------------------------")
+		# print("----------------------------------------------")
 
-		speakers = dict(sorted(speakers.items(), key=operator.itemgetter(0)))
-		speaker_count = 1
-		print("\n\n\n----------------------------------------------")
-		print("Speaker \tStopwords")
-		print("----------------------------------------------")
-		for speaker,count in speakers.items():
-			print('Speaker{} \t{}'.format(speaker_count,count))
-			speaker_count += 1 
+		# speakers = dict(sorted(speakers.items(), key=operator.itemgetter(0)))
+		# speaker_count = 1
+		# print("\n\n\n----------------------------------------------")
+		# print("Speaker\tStopwords\tFillerwords")
+		# print("----------------------------------------------")
+		# for speaker,count in speakers.items():
+		# 	print('Speaker {} \t{} \t\t{}'.format(speaker_count,count[0],count[1]))
+		# 	speaker_count += 1 
 
-		print("----------------------------------------------")
+		# print("----------------------------------------------")
 
 
 
