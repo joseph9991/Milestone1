@@ -11,8 +11,6 @@ import random
 import operator
 import json
 
-# TODO: Lambda Handler Fn -> Check if filler words is working or not
-# TODO: Task1 -> Make sure print filler words count 
 
 
 class Task1:
@@ -53,7 +51,7 @@ class Task1:
 		print("\nConverting file to wav format...")
 		start_time = time.time()
 		self.audio_format = 'wav'
-		data, sampling_rate = librosa.load(self.file_name,sr=16000)
+		data, sampling_rate = librosa.load(self.file_name,sr=44100)
 		new_file_name = os.path.basename(os.path.splitext(self.file_name)[0]) + '.wav'
 		librosa.output.write_wav(new_file_name, data, sampling_rate)
 		self.file_name = new_file_name
@@ -134,40 +132,53 @@ class Task1:
 
 		# stream lines from an S3 object
 
-		data =json.load(smart_open.open(file_link))
-		print(json.dumps(data,indent=4))
+		jsonData =json.load(smart_open.open(file_link))
+
+		print("\n\n----------------------------------------------")
+		print("Speaker\tStopwords\tFillerwords\tSpeech")
+		print("----------------------------------------------")		
+
+		for data in jsonData[0]:
+			print('{}\t{}\t\t{}\t{}'.format(data['speaker'],data['stopwords'],
+				data['fillerwords'],data['comment']))
+
+		print("----------------------------------------------")	
 
 
 
-		# stream lines from an S3 object
-		# df = pd.read_csv(smart_open.open(file_link))
-				
-		# speakers = {}
+		print("\n\n\n----------------------------------------------")
+		print("Speaker\tStopwords\tFillerwords")
+		print("----------------------------------------------")
 
-		# print("\n\n----------------------------------------------")
-		# print("Speaker\tStopwords\tFiller words\tSpeech")
-		# print("----------------------------------------------")
+		for speaker in jsonData[1].keys():
+			print('{}\t{}\t{}'.format(speaker,sum(jsonData[1][speaker]["stopwords"].values()),
+				sum(jsonData[1][speaker]["fillerwords"].values())))
 
-		# for index, row in df.iterrows():
-		# 	print('{}\t{}\t{}\t{}'.format(row['speaker'], row['stopwords'], row['fillerwords'], row['comment']))
-		# 	if not row['speaker'] in speakers:
-		# 		speakers[row['speaker']] = [row['stopwords'],row['fillerwords']]
-		# 	else:
-		# 		speakers[row['speaker']][0] += row['stopwords']
-		# 		speakers[row['speaker']][1] += row['fillerwords']
+		print("----------------------------------------------")			
+		
 
-		# print("----------------------------------------------")
+		for speaker,value in jsonData[1].items():
+			flag = True
+			print("\n\n\n----------------------------------------------")
+			print('{} Analytics'.format(speaker))
+			print("----------------------------------------------")		
+			print('Stopwords')
+			for word, count in value['stopwords'].items():
+				if flag:
+					print(word,count,end='\t')
+					flag = False
+				else:
+					print(word,count)
+					flag = True
 
-		# speakers = dict(sorted(speakers.items(), key=operator.itemgetter(0)))
-		# speaker_count = 1
-		# print("\n\n\n----------------------------------------------")
-		# print("Speaker\tStopwords\tFillerwords")
-		# print("----------------------------------------------")
-		# for speaker,count in speakers.items():
-		# 	print('Speaker {} \t{} \t\t{}'.format(speaker_count,count[0],count[1]))
-		# 	speaker_count += 1 
+			
+			if value['fillerwords']:
+				print("\n\n----------")
+				print('Fillerwords')
+				for word, count in value['fillerwords'].items():
+					print(word,count)
 
-		# print("----------------------------------------------")
+		print("\n\n----------------------------------------------")	
 
 
 
