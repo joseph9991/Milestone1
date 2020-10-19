@@ -189,5 +189,5 @@ class Task1:
 # 	bucket_name = 'surfboard-transcribe'
 
 # 	sb = Task1(file_name,bucket_name)
-# 	sb.execute()
+# 	sb.execute_all_functions()
 
