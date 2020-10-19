@@ -14,6 +14,8 @@ if __name__ == "__main__":
 	t1 = Task1(file_name,bucket_name)
 	data = t1.execute_all_functions()
 
+	input("Press Enter to Continue...")
+
 	t2 = Task2(data,file_name)
 	t2.execute_all_functions()
 	
