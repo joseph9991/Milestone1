@@ -1,16 +1,9 @@
 import os, sys
-import datetime
+import datetime, time
 import librosa
-import time
-import boto3
-import warnings
-import smart_open
-import pandas as pd
-from pandas import read_csv
-import random
-import operator
+import boto3, smart_open
+import random, operator
 import json
-
 
 
 class Task1:
@@ -80,10 +73,7 @@ class Task1:
 		except Exception as err:
 			print(f'Error occurred: {err}')
 			exit(0)
-	
-		# Deletes the temporary generated file	
-		# if os.path.exists(self.file_name):
-		# 	os.remove(self.file_name)
+
 
 
 
@@ -121,11 +111,11 @@ class Task1:
 
 
 
-	def read_csv_response(self):
+	def read_json_response(self):
 		print("\nWaiting for the JSON file to generate...")
 		time.sleep(10)
 		
-		print("Starting Task 1: Count stopwords of each speaker")
+		
 		
 		jsonFile = '{}-{}.json'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
 		file_link = 's3://{}/transcript/{}'.format(self.bucket_name, jsonFile)
@@ -180,21 +170,24 @@ class Task1:
 
 		print("\n\n----------------------------------------------")	
 
+		return jsonData[0]
 
 
-	def execute(self):
+
+	def execute_all_functions(self):
+		print("Commencing Task 1: Identify & Count stopwords of each speaker")
 		self.upload_file()
 		self.start_transcribe()
-		self.read_csv_response()
-		
+		data = self.read_json_response()
+		return data
 
-if __name__ == "__main__":
-	file_name = sys.argv[1]
+# if __name__ == "__main__":
+# 	file_name = sys.argv[1]
 
-	# For ignoring UserWarnings
-	warnings.filterwarnings("ignore")
-	bucket_name = 'surfboard-transcribe'
+# 	# For ignoring UserWarnings
+# 	warnings.filterwarnings("ignore")
+# 	bucket_name = 'surfboard-transcribe'
 
-	sb = Task1(file_name,bucket_name)
-	sb.execute()
+# 	sb = Task1(file_name,bucket_name)
+# 	sb.execute()
 
