@@ -1,8 +1,8 @@
 import sys
 import warnings
 
-from task1 import Task1
-from task2 import Task2
+from task.task1 import Task1
+from task.task2 import Task2
 
 if __name__ == "__main__":
 	file_name = sys.argv[1]		
