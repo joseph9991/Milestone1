@@ -2,18 +2,18 @@ import os, sys
 import datetime, time
 import librosa
 import boto3, smart_open
-import random, operator
+import  operator
 import json
 
 
 class Task1:
 
-	def __init__(self, file_name, bucket_name):
+	def __init__(self, file_name, bucket_name, number):
 		self.file_name = file_name
 		self.bucket_name = bucket_name
 		self.audio_format = ""
 		self.s3_client = boto3.client('s3')	
-		self.n = random.randint(0,100000)
+		self.n = number
 
 	# Validates the file, checks for the valid file extension and returns audio-format
 	def identifyFormat(self):
@@ -53,7 +53,7 @@ class Task1:
 			" seconds")
 
 
-	def upload_file(self):
+	def upload_file(self,path):
 		self.audio_format = self.identifyFormat()
 
 		if self.audio_format == 'm4a' or self.audio_format == 'aac':	
@@ -65,7 +65,7 @@ class Task1:
 		try:
 			start_time = time.time()
 			response = self.s3_client.upload_file(self.file_name, self.bucket_name, 
-				'audio/{}'.format(os.path.basename(self.file_name)))
+				'{}{}'.format(path,os.path.basename(self.file_name)))
 			end_time = time.time()
 			print("Finished uploading file to S3 in " + self.seconds_to_minutes(end_time - start_time) + 
 				" seconds")
@@ -77,13 +77,13 @@ class Task1:
 
 
 
-	def start_transcribe(self):
+	def start_transcribe(self,bucket,path):
 		print("\nCreating a new Transcribe Job!!\nPlease wait...\n")
 		start_time = time.time()
 		transcribe = boto3.client('transcribe')
 		
 		job_name = '{}-{}'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
-		job_uri = "https://{}.s3.amazonaws.com/audio/{}".format(self.bucket_name, 
+		job_uri = "https://{}.s3.amazonaws.com/{}{}".format(self.bucket_name,path, 
 			os.path.basename(self.file_name))
 
 		transcribe.start_transcription_job(
@@ -91,7 +91,7 @@ class Task1:
 			Media={'MediaFileUri':job_uri},
 			MediaFormat=self.audio_format,
 			LanguageCode='en-US',
-			OutputBucketName='surfboard-response',
+			OutputBucketName=bucket,
 			Settings={
 				'ShowSpeakerLabels':True,
 				'MaxSpeakerLabels':3,
@@ -102,7 +102,7 @@ class Task1:
 			status = transcribe.get_transcription_job(TranscriptionJobName=job_name)
 			if status['TranscriptionJob']['TranscriptionJobStatus'] in ['COMPLETED', 'FAILED']:
 				break
-			print("Not ready yet...")
+			# print("Not ready yet...")
 			time.sleep(15)
 
 		end_time = time.time()
@@ -113,16 +113,19 @@ class Task1:
 
 	def read_json_response(self):
 		print("\nWaiting for the JSON file to generate...")
-		time.sleep(10)
-		
+		time.sleep(5)
 		
 		
 		jsonFile = '{}-{}.json'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
 		file_link = 's3://{}/transcript/{}'.format(self.bucket_name, jsonFile)
 
+		return json.load(smart_open.open(file_link))
+
+
+	def analyze(self,jsonData):
 		# stream lines from an S3 object
 
-		jsonData =json.load(smart_open.open(file_link))
+		jsonData = jsonData
 
 		print("\n\n----------------------------------------------")
 		print("Speaker\tStopwords\tFillerwords\tSpeech")
@@ -176,10 +179,14 @@ class Task1:
 
 	def execute_all_functions(self):
 		print("Commencing Task 1: Identify & Count stopwords of each speaker")
-		self.upload_file()
-		self.start_transcribe()
-		data = self.read_json_response()
+		self.upload_file('audio/')
+		self.start_transcribe('surfboard-response','audio/')
+		jsonData = self.read_json_response()
+
+		data = self.analyze(jsonData)
 		return data
+
+
 
 # # For Testing
 # if __name__ == "__main__":

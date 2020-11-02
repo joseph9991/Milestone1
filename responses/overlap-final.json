@@ -1,0 +1,57 @@
+[
+    [
+        {
+            "Unnamed: 0": 0,
+            "start_time": "00:00:00",
+            "end_time": "00:00:06",
+            "speaker": "spk_0",
+            "comment": "everyone the money. How about how about"
+        },
+        {
+            "Unnamed: 0": 1,
+            "start_time": "00:00:06",
+            "end_time": "00:00:10",
+            "speaker": "spk_1",
+            "comment": "using social media channels to promote our website? Everyone is on social media"
+        },
+        {
+            "Unnamed: 0": 2,
+            "start_time": "00:00:10",
+            "end_time": "00:00:12",
+            "speaker": "spk_0",
+            "comment": "these days on E. We"
+        },
+        {
+            "Unnamed: 0": 3,
+            "start_time": "00:00:12",
+            "end_time": "00:00:14",
+            "speaker": "spk_1",
+            "comment": "just need to target the right audience and share outside"
+        },
+        {
+            "Unnamed: 0": 4,
+            "start_time": "00:00:14",
+            "end_time": "00:00:17",
+            "speaker": "spk_0",
+            "comment": "with them. Were often Oh, what do you think?"
+        },
+        {
+            "Unnamed: 0": 5,
+            "start_time": "00:00:18",
+            "end_time": "00:00:21",
+            "speaker": "spk_0",
+            "comment": "Yes. I didn't work on creating a plan for this. I come up"
+        },
+        {
+            "Unnamed: 0": 6,
+            "start_time": "00:00:21",
+            "end_time": "00:00:22",
+            "speaker": "spk_1",
+            "comment": "with the constant talent base."
+        }
+    ],
+    {
+        "spk_0": 4,
+        "spk_1": 1
+    }
+]

@@ -8,7 +8,7 @@ import re
 import soundfile as sf
 import pyloudnorm as pyln
 
-from thdncalculator import execute_thdn
+from .thdncalculator import execute_thdn
 
 class Task2:
 
@@ -94,6 +94,8 @@ class Task2:
 				for wavFile in wavFiles:
 					f.write('file \'{}\'\n'.format(wavFile))
 
+		# speaker_set = wavFiles
+
 		# Deleting all the text files needed for merging
 		for txt_file in txt_files:
 			command = f"ffmpeg -loglevel quiet -y -f concat -i {txt_file} -c copy {txt_file[:-4]}.wav"
@@ -149,170 +151,171 @@ class Task2:
 		self.trim()
 		self.generate_files()	
 		self.calculate_loudness()	
+		return self.speaker_set
 
 
 
 
-# For Testing
-if __name__ == "__main__":
+# # For Testing
+# if __name__ == "__main__":
 
-	file_name = sys.argv[1]
+# 	file_name = sys.argv[1]
 
-	# Temp Code
-	data =[
-        {
-            "Unnamed: 0": 0,
-            "start_time": "00:00:00",
-            "end_time": "00:00:00",
-            "speaker": "spk_1",
-            "comment": "Well,",
-            "stopwords": 0,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 1,
-            "start_time": "00:00:01",
-            "end_time": "00:00:02",
-            "speaker": "spk_1",
-            "comment": "Hi, everyone.",
-            "stopwords": 0,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 2,
-            "start_time": "00:00:03",
-            "end_time": "00:00:05",
-            "speaker": "spk_0",
-            "comment": "Everyone's money. Good",
-            "stopwords": 0,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 3,
-            "start_time": "00:00:05",
-            "end_time": "00:00:10",
-            "speaker": "spk_2",
-            "comment": "morning, everyone. Money. Thanks for joining. Uh, so let's quickly get started with the meeting.",
-            "stopwords": 4,
-            "fillerwords": 1
-        },
-        {
-            "Unnamed: 0": 4,
-            "start_time": "00:00:11",
-            "end_time": "00:00:14",
-            "speaker": "spk_2",
-            "comment": "Today's agenda is to discuss how we plan to increase the reach off our website",
-            "stopwords": 8,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 5,
-            "start_time": "00:00:15",
-            "end_time": "00:00:20",
-            "speaker": "spk_2",
-            "comment": "and how to make it popular. Do you have any ideas, guys? Yes.",
-            "stopwords": 8,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 6,
-            "start_time": "00:00:20",
-            "end_time": "00:00:22",
-            "speaker": "spk_0",
-            "comment": "Oh, Whoa. Um,",
-            "stopwords": 0,
-            "fillerwords": 1
-        },
-        {
-            "Unnamed: 0": 7,
-            "start_time": "00:00:23",
-            "end_time": "00:00:36",
-            "speaker": "spk_1",
-            "comment": "it's okay. Thank you so much. Yes. Asai was saying one off. The ideas could be to make it more such friendly, you know? And to that I think we can. We need to improve the issue off our website.",
-            "stopwords": 21,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 8,
-            "start_time": "00:00:37",
-            "end_time": "00:00:41",
-            "speaker": "spk_2",
-            "comment": "Yeah, that's a great point. We certainly need to improve the SC off our site.",
-            "stopwords": 6,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 9,
-            "start_time": "00:00:42",
-            "end_time": "00:00:43",
-            "speaker": "spk_2",
-            "comment": "Let me let me take a note of this.",
-            "stopwords": 4,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 10,
-            "start_time": "00:00:45",
-            "end_time": "00:00:57",
-            "speaker": "spk_0",
-            "comment": "How about using social media channels to promote our website? Everyone is on social media these days on way. We just need to target the right audience and share outside with them. Were often Oh, what do you think?",
-            "stopwords": 18,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 11,
-            "start_time": "00:00:58",
-            "end_time": "00:01:05",
-            "speaker": "spk_2",
-            "comment": "It's definitely a great idea on since we already have our social accounts, I think we can get started on this one immediately.",
-            "stopwords": 11,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 12,
-            "start_time": "00:01:06",
-            "end_time": "00:01:11",
-            "speaker": "spk_0",
-            "comment": "Yes, I can work on creating a plan for this. I come up with the content calendar base.",
-            "stopwords": 9,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 13,
-            "start_time": "00:01:11",
-            "end_time": "00:01:17",
-            "speaker": "spk_1",
-            "comment": "Yeah, and I can start with creating the CEO content for all the periods off our website.",
-            "stopwords": 10,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 14,
-            "start_time": "00:01:17",
-            "end_time": "00:01:24",
-            "speaker": "spk_2",
-            "comment": "Awesome. I think we already have a plan in place. Let's get rolling Eyes. Yeah, definitely.",
-            "stopwords": 5,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 15,
-            "start_time": "00:01:24",
-            "end_time": "00:01:25",
-            "speaker": "spk_2",
-            "comment": "Yeah, sure.",
-            "stopwords": 0,
-            "fillerwords": 0
-        },
-        {
-            "Unnamed: 0": 16,
-            "start_time": "00:01:26",
-            "end_time": "00:01:33",
-            "speaker": "spk_2",
-            "comment": "Great. Thanks. Thanks, everyone, for your ideas. I'm ending the call now. Talk to you soon. Bye. Bye bye. Thanks.",
-            "stopwords": 5,
-            "fillerwords": 0
-        }]
+# 	# Temp Code
+# 	data =[
+#         {
+#             "Unnamed: 0": 0,
+#             "start_time": "00:00:00",
+#             "end_time": "00:00:00",
+#             "speaker": "spk_1",
+#             "comment": "Well,",
+#             "stopwords": 0,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 1,
+#             "start_time": "00:00:01",
+#             "end_time": "00:00:02",
+#             "speaker": "spk_1",
+#             "comment": "Hi, everyone.",
+#             "stopwords": 0,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 2,
+#             "start_time": "00:00:03",
+#             "end_time": "00:00:05",
+#             "speaker": "spk_0",
+#             "comment": "Everyone's money. Good",
+#             "stopwords": 0,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 3,
+#             "start_time": "00:00:05",
+#             "end_time": "00:00:10",
+#             "speaker": "spk_2",
+#             "comment": "morning, everyone. Money. Thanks for joining. Uh, so let's quickly get started with the meeting.",
+#             "stopwords": 4,
+#             "fillerwords": 1
+#         },
+#         {
+#             "Unnamed: 0": 4,
+#             "start_time": "00:00:11",
+#             "end_time": "00:00:14",
+#             "speaker": "spk_2",
+#             "comment": "Today's agenda is to discuss how we plan to increase the reach off our website",
+#             "stopwords": 8,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 5,
+#             "start_time": "00:00:15",
+#             "end_time": "00:00:20",
+#             "speaker": "spk_2",
+#             "comment": "and how to make it popular. Do you have any ideas, guys? Yes.",
+#             "stopwords": 8,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 6,
+#             "start_time": "00:00:20",
+#             "end_time": "00:00:22",
+#             "speaker": "spk_0",
+#             "comment": "Oh, Whoa. Um,",
+#             "stopwords": 0,
+#             "fillerwords": 1
+#         },
+#         {
+#             "Unnamed: 0": 7,
+#             "start_time": "00:00:23",
+#             "end_time": "00:00:36",
+#             "speaker": "spk_1",
+#             "comment": "it's okay. Thank you so much. Yes. Asai was saying one off. The ideas could be to make it more such friendly, you know? And to that I think we can. We need to improve the issue off our website.",
+#             "stopwords": 21,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 8,
+#             "start_time": "00:00:37",
+#             "end_time": "00:00:41",
+#             "speaker": "spk_2",
+#             "comment": "Yeah, that's a great point. We certainly need to improve the SC off our site.",
+#             "stopwords": 6,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 9,
+#             "start_time": "00:00:42",
+#             "end_time": "00:00:43",
+#             "speaker": "spk_2",
+#             "comment": "Let me let me take a note of this.",
+#             "stopwords": 4,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 10,
+#             "start_time": "00:00:45",
+#             "end_time": "00:00:57",
+#             "speaker": "spk_0",
+#             "comment": "How about using social media channels to promote our website? Everyone is on social media these days on way. We just need to target the right audience and share outside with them. Were often Oh, what do you think?",
+#             "stopwords": 18,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 11,
+#             "start_time": "00:00:58",
+#             "end_time": "00:01:05",
+#             "speaker": "spk_2",
+#             "comment": "It's definitely a great idea on since we already have our social accounts, I think we can get started on this one immediately.",
+#             "stopwords": 11,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 12,
+#             "start_time": "00:01:06",
+#             "end_time": "00:01:11",
+#             "speaker": "spk_0",
+#             "comment": "Yes, I can work on creating a plan for this. I come up with the content calendar base.",
+#             "stopwords": 9,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 13,
+#             "start_time": "00:01:11",
+#             "end_time": "00:01:17",
+#             "speaker": "spk_1",
+#             "comment": "Yeah, and I can start with creating the CEO content for all the periods off our website.",
+#             "stopwords": 10,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 14,
+#             "start_time": "00:01:17",
+#             "end_time": "00:01:24",
+#             "speaker": "spk_2",
+#             "comment": "Awesome. I think we already have a plan in place. Let's get rolling Eyes. Yeah, definitely.",
+#             "stopwords": 5,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 15,
+#             "start_time": "00:01:24",
+#             "end_time": "00:01:25",
+#             "speaker": "spk_2",
+#             "comment": "Yeah, sure.",
+#             "stopwords": 0,
+#             "fillerwords": 0
+#         },
+#         {
+#             "Unnamed: 0": 16,
+#             "start_time": "00:01:26",
+#             "end_time": "00:01:33",
+#             "speaker": "spk_2",
+#             "comment": "Great. Thanks. Thanks, everyone, for your ideas. I'm ending the call now. Talk to you soon. Bye. Bye bye. Thanks.",
+#             "stopwords": 5,
+#             "fillerwords": 0
+#         }]
 
-	obj = Task2(data,file_name)
-	obj.execute_all_functions()
+# 	obj = Task2(data,file_name)
+# 	obj.execute_all_functions()
