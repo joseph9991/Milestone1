@@ -41,7 +41,7 @@ class Task1:
 	# Converts m4a/aac file to wav, stores it as a temporary file, and replaces the object's 
 	# filename with temp.wav
 	def convert_file_to_wav(self):
-		print("\nConverting file to wav format...")
+		print("\nConverting {} to wav format...".format(os.path.basename(self.file_name)))
 		start_time = time.time()
 		self.audio_format = 'wav'
 		data, sampling_rate = librosa.load(self.file_name,sr=44100)
@@ -49,7 +49,7 @@ class Task1:
 		librosa.output.write_wav(new_file_name, data, sampling_rate)
 		self.file_name = new_file_name
 		end_time = time.time()
-		print("Finished conversion to WAV format in " + self.seconds_to_minutes(end_time - start_time) + 
+		print("Finished conversion to .wav in " + self.seconds_to_minutes(end_time - start_time) + 
 			" seconds")
 
 
@@ -61,7 +61,7 @@ class Task1:
 		
 						
 
-		print("\nUploading file to S3...")
+		print("\nUploading {} to S3...".format(os.path.basename(self.file_name)))
 		try:
 			start_time = time.time()
 			response = self.s3_client.upload_file(self.file_name, self.bucket_name, 
@@ -78,13 +78,15 @@ class Task1:
 
 
 	def start_transcribe(self,bucket,path):
-		print("\nCreating a new Transcribe Job!!\nPlease wait...\n")
+
 		start_time = time.time()
 		transcribe = boto3.client('transcribe')
 		
 		job_name = '{}-{}'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
 		job_uri = "https://{}.s3.amazonaws.com/{}{}".format(self.bucket_name,path, 
 			os.path.basename(self.file_name))
+
+		print("\nCreating a new Transcribe Job {}!!\nPlease wait...\n".format(job_name))
 
 		transcribe.start_transcription_job(
 			TranscriptionJobName=job_name,
@@ -112,8 +114,8 @@ class Task1:
 
 
 	def read_json_response(self):
-		print("\nWaiting for the JSON file to generate...")
-		time.sleep(5)
+		print("\nWaiting for the output file to generate...")
+		time.sleep(2)
 		
 		
 		jsonFile = '{}-{}.json'.format(os.path.basename(os.path.splitext(self.file_name)[0]),str(self.n))
