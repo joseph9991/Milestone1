@@ -54,11 +54,12 @@ class Task3:
 		print("\n\n")
 		for speaker_key,value in data.items():
 			for count in value.values():
-				print('{} was interrupted by {} speaker(s)'.format(speaker_key,len(value.values())-1))
+				print('{} was interrupted by {} speaker(s)'.format(speaker_key[:-4],len(value.values())-1))
 				break
 
 
 	def execute_all_functions(self):
+		print("Commencing Task 3: Count times each person spoke overlapping with someone else’s speech.")
 		self.multithreading()
 		time.sleep(5)
 		data = self.read_response()
