@@ -20,7 +20,12 @@ class Task2:
 	
 
 	def merge_timestamp(self):
-		
+	'''
+	This functions helps us to correct small error in the speaker end 
+	time obtained from response from Task 1. 
+	Basically, uses the next speaker's start time and rerplaces it with the end time 
+	of the current speaker
+	'''
 		df_length = len(self.df.index) 
 		cursor = 0
 		
@@ -60,7 +65,13 @@ class Task2:
 
 		
 	def trim(self):
-
+		'''
+		This function helps us to trim the files according to the each individual speaker using FFMPEG.
+		But, there will be multiple files per speaker
+		OUTPUT: spk_0-1.wav,spk_0-2.wav,spk_0-3.wav
+		spk_1-1.wav, spk_1-2.wav
+		spk_2-1.wav,spk_2-2.wav 
+		'''
 		cursor = 0
 		for speaker in self.speakers:
 			new_file = speaker[0]+str(cursor)+'.wav'
@@ -79,7 +90,10 @@ class Task2:
 
 
 	def generate_files(self):
-
+		'''
+		Merges each individual speaker files.
+		OUTPUT: spk_0.wav,spk_1.wav,spk_2.wav
+		'''
 		txt_files = []
 		for i in range(len(self.speaker_set)):
 			fileName = '{}.txt'.format(self.speaker_set[i])
@@ -111,6 +125,9 @@ class Task2:
 
 
 	def calculate_loudness(self):
+		'''
+		Calcualtes Loudness of each speaker file and THDN value
+		'''
 		speaker_loudness = {}
 		speaker_thdn = {}
 		speaker_frequency = {}
