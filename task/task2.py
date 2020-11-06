@@ -124,7 +124,7 @@ class Task2:
 
 
 
-	def calculate_loudness(self):
+	def calculate_rank(self):
 		'''
 		Calcualtes Loudness of each speaker file and THDN value
 		'''
@@ -167,7 +167,7 @@ class Task2:
 		self.merge_timestamp()
 		self.trim()
 		self.generate_files()	
-		self.calculate_loudness()	
+		self.calculate_rank()	
 		return self.speaker_set
 
 
